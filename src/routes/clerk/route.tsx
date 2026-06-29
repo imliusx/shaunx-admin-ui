@@ -93,11 +93,11 @@ function MissingClerkPubKey() {
             </ol>
             <p>The final result should resemble the following:</p>
 
-            <div className='@container space-y-2 rounded-md bg-slate-800 px-3 py-3 text-sm text-slate-200'>
+            <div className='@container space-y-2 rounded-md bg-muted px-3 py-3 text-sm text-foreground'>
               <span className='ps-1'>.env</span>
-              <pre className='overflow-auto overscroll-x-contain rounded bg-slate-950 px-2 py-1 text-xs'>
+              <pre className='overflow-auto overscroll-x-contain rounded bg-background px-2 py-1 text-xs ring-1 ring-border'>
                 <code>
-                  <span className='before:text-slate-400 md:before:pe-2 md:before:content-["1."]'>
+                  <span className='before:text-muted-foreground md:before:pe-2 md:before:content-["1."]'>
                     VITE_CLERK_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
                   </span>
                 </code>

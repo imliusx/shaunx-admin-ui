@@ -1,7 +1,8 @@
+import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ChevronsUpDown } from 'lucide-react'
 import { showSubmittedData } from '@/lib/show-submitted-data'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -60,6 +61,7 @@ const defaultValues: Partial<AccountFormValues> = {
 }
 
 export function AccountForm() {
+  const [languageOpen, setLanguageOpen] = useState(false)
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues,
@@ -109,12 +111,13 @@ export function AccountForm() {
           render={({ field }) => (
             <FormItem className='flex flex-col'>
               <FormLabel>Language</FormLabel>
-              <Popover>
+              <Popover open={languageOpen} onOpenChange={setLanguageOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
                       variant='outline'
                       role='combobox'
+                      aria-expanded={languageOpen}
                       className={cn(
                         'w-50 justify-between',
                         !field.value && 'text-muted-foreground'
@@ -125,37 +128,37 @@ export function AccountForm() {
                             (language) => language.value === field.value
                           )?.label
                         : 'Select language'}
-                      <CaretSortIcon className='ms-2 h-4 w-4 shrink-0 opacity-50' />
+                      <ChevronsUpDown
+                        data-icon='inline-end'
+                        className='opacity-50'
+                      />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className='w-50 p-0'>
+                <PopoverContent className='w-50 p-0' align='start'>
                   <Command>
                     <CommandInput placeholder='Search language...' />
-                    <CommandEmpty>No language found.</CommandEmpty>
-                    <CommandGroup>
-                      <CommandList>
+                    <CommandList className='max-h-80'>
+                      <CommandEmpty>No language found.</CommandEmpty>
+                      <CommandGroup>
                         {languages.map((language) => (
                           <CommandItem
-                            value={language.label}
                             key={language.value}
+                            value={language.label}
+                            data-checked={language.value === field.value}
+                            className='rounded-md'
                             onSelect={() => {
-                              form.setValue('language', language.value)
+                              form.setValue('language', language.value, {
+                                shouldValidate: true,
+                              })
+                              setLanguageOpen(false)
                             }}
                           >
-                            <CheckIcon
-                              className={cn(
-                                'size-4',
-                                language.value === field.value
-                                  ? 'opacity-100'
-                                  : 'opacity-0'
-                              )}
-                            />
                             {language.label}
                           </CommandItem>
                         ))}
-                      </CommandList>
-                    </CommandGroup>
+                      </CommandGroup>
+                    </CommandList>
                   </Command>
                 </PopoverContent>
               </Popover>

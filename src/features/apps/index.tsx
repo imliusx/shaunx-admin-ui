@@ -6,6 +6,7 @@ import {
   ArrowDownAZ,
   Search as SearchIcon,
 } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   InputGroup,
@@ -177,7 +178,10 @@ export function Apps() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className={`${app.connected ? "border border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900" : ""}`}
+                  className={cn(
+                    app.connected &&
+                      "border-primary/30 bg-primary/10 hover:bg-primary/15"
+                  )}
                 >
                   {app.connected ? "Connected" : "Connect"}
                 </Button>

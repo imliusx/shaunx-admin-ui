@@ -69,8 +69,8 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
                 buttonVariants({ variant: "ghost" }),
                 pathname === item.href
                   ? "bg-muted hover:bg-accent"
-                  : "hover:bg-accent hover:underline",
-                "justify-start rounded-md"
+                  : "hover:bg-accent",
+                "justify-start rounded-lg no-underline hover:no-underline"
               )}
             >
               <span className="me-2">{item.icon}</span>

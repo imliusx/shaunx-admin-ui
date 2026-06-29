@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,6 +20,8 @@ type TopNavProps = React.HTMLAttributes<HTMLElement> & {
 }
 
 export function TopNav({ className, links, ...props }: TopNavProps) {
+  const { t } = useTranslation()
+
   return (
     <>
       <DropdownMenu modal={false}>
@@ -33,17 +36,21 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side='bottom' align='start'>
-          {links.map(({ title, href, isActive, disabled }) => (
-            <DropdownMenuItem key={`${title}-${href}`} asChild>
-              <Link
-                to={href}
-                className={!isActive ? 'text-muted-foreground' : ''}
-                disabled={disabled}
-              >
-                {title}
-              </Link>
-            </DropdownMenuItem>
-          ))}
+          {links.map(({ title, href, isActive, disabled }) => {
+            const label = t(`navigation.${title}`, { defaultValue: title })
+
+            return (
+              <DropdownMenuItem key={`${title}-${href}`} asChild>
+                <Link
+                  to={href}
+                  className={!isActive ? 'text-muted-foreground' : ''}
+                  disabled={disabled}
+                >
+                  {label}
+                </Link>
+              </DropdownMenuItem>
+            )
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -54,16 +61,20 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
         )}
         {...props}
       >
-        {links.map(({ title, href, isActive, disabled }) => (
-          <Link
-            key={`${title}-${href}`}
-            to={href}
-            disabled={disabled}
-            className={`text-sm font-medium transition-colors hover:text-primary ${isActive ? '' : 'text-muted-foreground'}`}
-          >
-            {title}
-          </Link>
-        ))}
+        {links.map(({ title, href, isActive, disabled }) => {
+          const label = t(`navigation.${title}`, { defaultValue: title })
+
+          return (
+            <Link
+              key={`${title}-${href}`}
+              to={href}
+              disabled={disabled}
+              className={`text-sm font-medium transition-colors hover:text-primary ${isActive ? '' : 'text-muted-foreground'}`}
+            >
+              {label}
+            </Link>
+          )
+        })}
       </nav>
     </>
   )

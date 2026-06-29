@@ -1,5 +1,6 @@
 import { useState, type JSX } from "react"
 import { useLocation, useNavigate, Link } from "@tanstack/react-router"
+import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -21,6 +22,7 @@ type SidebarNavProps = React.HTMLAttributes<HTMLElement> & {
 }
 
 export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
+  const { t } = useTranslation()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [val, setVal] = useState(pathname ?? "/settings")
@@ -35,7 +37,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
       <div className="p-1 md:hidden">
         <Select value={val} onValueChange={handleSelect}>
           <SelectTrigger className="h-12 sm:w-48">
-            <SelectValue placeholder="Theme" />
+            <SelectValue placeholder={t("settings.navPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -43,7 +45,11 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
                 <SelectItem key={item.href} value={item.href}>
                   <div className="flex items-center gap-3">
                     <span>{item.icon}</span>
-                    <span>{item.title}</span>
+                    <span>
+                      {t(`navigation.${item.title}`, {
+                        defaultValue: item.title,
+                      })}
+                    </span>
                   </div>
                 </SelectItem>
               ))}
@@ -74,7 +80,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
               )}
             >
               <span className="me-2">{item.icon}</span>
-              {item.title}
+              {t(`navigation.${item.title}`, { defaultValue: item.title })}
             </Link>
           ))}
         </nav>

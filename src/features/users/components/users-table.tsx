@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from "react"
 import {
   type SortingState,
   type VisibilityState,
@@ -10,9 +10,10 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
-import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+} from "@tanstack/react-table"
+import { useTranslation } from "react-i18next"
+import { cn } from "@/lib/utils"
+import { type NavigateFn, useTableUrlState } from "@/hooks/use-table-url-state"
 import {
   Table,
   TableBody,
@@ -20,12 +21,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { roles } from '../data/data'
-import { type User } from '../data/schema'
-import { DataTableBulkActions } from './data-table-bulk-actions'
-import { usersColumns as columns } from './users-columns'
+} from "@/components/ui/table"
+import { DataTablePagination, DataTableToolbar } from "@/components/data-table"
+import { roles, userStatuses } from "../data/data"
+import { type User } from "../data/schema"
+import { DataTableBulkActions } from "./data-table-bulk-actions"
+import { getUsersColumns } from "./users-columns"
 
 type DataTableProps = {
   data: User[]
@@ -34,6 +35,9 @@ type DataTableProps = {
 }
 
 export function UsersTable({ data, search, navigate }: DataTableProps) {
+  const { t } = useTranslation()
+  const columns = useMemo(() => getUsersColumns(t), [t])
+
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -57,9 +61,9 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
     globalFilter: { enabled: false },
     columnFilters: [
       // username per-column text filter
-      { columnId: 'username', searchKey: 'username', type: 'string' },
-      { columnId: 'status', searchKey: 'status', type: 'array' },
-      { columnId: 'role', searchKey: 'role', type: 'array' },
+      { columnId: "username", searchKey: "username", type: "string" },
+      { columnId: "status", searchKey: "status", type: "array" },
+      { columnId: "role", searchKey: "role", type: "array" },
     ],
   })
 
@@ -96,43 +100,45 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
     <div
       className={cn(
         'max-sm:has-[div[role="toolbar"]]:mb-16', // Add margin bottom to the table on mobile when the toolbar is visible
-        'flex flex-1 flex-col gap-4'
+        "flex flex-1 flex-col gap-4"
       )}
     >
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Filter users...'
-        searchKey='username'
+        searchPlaceholder={t("users.table.searchPlaceholder")}
+        searchKey="username"
         filters={[
           {
-            columnId: 'status',
-            title: 'Status',
-            options: [
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' },
-              { label: 'Invited', value: 'invited' },
-              { label: 'Suspended', value: 'suspended' },
-            ],
+            columnId: "status",
+            title: t("users.columns.status"),
+            options: Array.from(userStatuses, ([value, status]) => ({
+              label: t(status.labelKey),
+              value,
+              icon: status.icon,
+            })),
           },
           {
-            columnId: 'role',
-            title: 'Role',
-            options: roles.map((role) => ({ ...role })),
+            columnId: "role",
+            title: t("users.columns.role"),
+            options: roles.map((role) => ({
+              ...role,
+              label: t(role.labelKey),
+            })),
           },
         ]}
       />
-      <div className='overflow-hidden rounded-md border'>
+      <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className='group/row'>
+              <TableRow key={headerGroup.id} className="group/row">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
                       key={header.id}
                       colSpan={header.colSpan}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
+                        "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
                         header.column.columnDef.meta?.className,
                         header.column.columnDef.meta?.thClassName
                       )}
@@ -154,14 +160,14 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className='group/row'
+                  data-state={row.getIsSelected() && "selected"}
+                  className="group/row"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
+                        "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
                         cell.column.columnDef.meta?.className,
                         cell.column.columnDef.meta?.tdClassName
                       )}
@@ -178,16 +184,16 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className="h-24 text-center"
                 >
-                  No results.
+                  {t("users.table.noResults")}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} className='mt-auto' />
+      <DataTablePagination table={table} className="mt-auto" />
       <DataTableBulkActions table={table} />
     </div>
   )

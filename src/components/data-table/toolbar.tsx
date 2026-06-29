@@ -1,5 +1,6 @@
 import { type Table } from "@tanstack/react-table"
 import { SearchIcon, X } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import {
   InputGroup,
@@ -26,12 +27,14 @@ type DataTableToolbarProps<TData> = {
 
 export function DataTableToolbar<TData>({
   table,
-  searchPlaceholder = "Filter...",
+  searchPlaceholder,
   searchKey,
   filters = [],
 }: DataTableToolbarProps<TData>) {
+  const { t } = useTranslation()
   const isFiltered =
     table.getState().columnFilters.length > 0 || table.getState().globalFilter
+  const placeholder = searchPlaceholder ?? t("table.toolbar.filterPlaceholder")
 
   return (
     <div className="flex items-center justify-between">
@@ -42,7 +45,7 @@ export function DataTableToolbar<TData>({
               <SearchIcon />
             </InputGroupAddon>
             <InputGroupInput
-              placeholder={searchPlaceholder}
+              placeholder={placeholder}
               value={
                 (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
               }
@@ -57,7 +60,7 @@ export function DataTableToolbar<TData>({
               <SearchIcon />
             </InputGroupAddon>
             <InputGroupInput
-              placeholder={searchPlaceholder}
+              placeholder={placeholder}
               value={table.getState().globalFilter ?? ""}
               onChange={(event) => table.setGlobalFilter(event.target.value)}
             />
@@ -86,7 +89,7 @@ export function DataTableToolbar<TData>({
             }}
             className="px-2 lg:px-3"
           >
-            Reset
+            {t("table.toolbar.reset")}
             <X data-icon="inline-end" />
           </Button>
         )}

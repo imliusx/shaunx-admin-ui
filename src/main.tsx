@@ -14,6 +14,7 @@ import { handleServerError } from '@/lib/handle-server-error'
 import { ColorThemeProvider } from './context/color-theme-provider'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
+import { LanguageProvider } from './context/language-provider'
 import { ThemeProvider } from './context/theme-provider'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
@@ -97,13 +98,15 @@ if (!rootElement.innerHTML) {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <ColorThemeProvider>
-            <FontProvider>
-              <DirectionProvider>
-                <TooltipProvider>
-                  <RouterProvider router={router} />
-                </TooltipProvider>
-              </DirectionProvider>
-            </FontProvider>
+            <LanguageProvider>
+              <FontProvider>
+                <DirectionProvider>
+                  <TooltipProvider>
+                    <RouterProvider router={router} />
+                  </TooltipProvider>
+                </DirectionProvider>
+              </FontProvider>
+            </LanguageProvider>
           </ColorThemeProvider>
         </ThemeProvider>
       </QueryClientProvider>

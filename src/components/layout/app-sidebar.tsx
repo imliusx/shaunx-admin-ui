@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
 import { HelpCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useLayout } from '@/context/layout-provider'
 import {
   Sidebar,
@@ -20,6 +21,7 @@ import { NavGroup } from './nav-group'
 import { TeamSwitcher } from './team-switcher'
 
 export function AppSidebar() {
+  const { t } = useTranslation()
   const { collapsible, variant } = useLayout()
   const { setOpenMobile } = useSidebar()
   const href = useLocation({ select: (location) => location.href })
@@ -50,11 +52,11 @@ export function AppSidebar() {
             <SidebarMenuButton
               asChild
               isActive={isHelpCenterActive}
-              tooltip='Help Center'
+              tooltip={t('navigation.Help Center')}
             >
               <Link to='/help-center' onClick={() => setOpenMobile(false)}>
                 <HelpCircle />
-                <span>Help Center</span>
+                <span>{t('navigation.Help Center')}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/stores/auth-store'
 import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,7 @@ export function UserAuthForm({
   redirectTo,
   ...props
 }: UserAuthFormProps) {
+  const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { auth } = useAuthStore()
@@ -46,14 +48,14 @@ export function UserAuthForm({
         auth.setAccessToken('mock-access-token')
         navigate({ to: redirectTo || '/', replace: true })
 
-        return `Welcome back, ${email}!`
+        return email
       })
       .finally(() => setIsLoading(false))
 
     toast.promise(signInPromise, {
-      loading: 'Signing in...',
-      success: (message) => message,
-      error: 'Error',
+      loading: t('auth.signIn.toastLoading'),
+      success: (email) => t('auth.signIn.toastSuccess', { email }),
+      error: t('auth.signIn.toastError'),
     })
   }
 
@@ -64,13 +66,17 @@ export function UserAuthForm({
           <form className='p-6 md:order-last md:p-8' onSubmit={onSubmit}>
             <FieldGroup>
               <div className='flex flex-col items-center gap-2 text-center'>
-                <h1 className='text-2xl font-bold'>Welcome back</h1>
+                <h1 className='text-2xl font-bold'>
+                  {t('auth.signIn.title')}
+                </h1>
                 <p className='text-balance text-muted-foreground'>
-                  Login to your Shaunx Admin account
+                  {t('auth.signIn.description')}
                 </p>
               </div>
               <Field>
-                <FieldLabel htmlFor='email'>Email</FieldLabel>
+                <FieldLabel htmlFor='email'>
+                  {t('auth.signIn.email')}
+                </FieldLabel>
                 <Input
                   id='email'
                   name='email'
@@ -81,12 +87,14 @@ export function UserAuthForm({
               </Field>
               <Field>
                 <div className='flex items-center'>
-                  <FieldLabel htmlFor='password'>Password</FieldLabel>
+                  <FieldLabel htmlFor='password'>
+                    {t('auth.signIn.password')}
+                  </FieldLabel>
                   <Link
                     to='/forgot-password'
                     className='ml-auto text-sm underline-offset-2 hover:underline'
                   >
-                    Forgot your password?
+                    {t('auth.signIn.forgotPassword')}
                   </Link>
                 </div>
                 <Input
@@ -99,11 +107,13 @@ export function UserAuthForm({
               </Field>
               <Field>
                 <Button type='submit' disabled={isLoading}>
-                  {isLoading ? 'Signing in...' : 'Login'}
+                  {isLoading
+                    ? t('auth.signIn.submitting')
+                    : t('auth.signIn.submit')}
                 </Button>
               </Field>
               <FieldSeparator className='*:data-[slot=field-separator-content]:bg-popover'>
-                Or continue with
+                {t('auth.signIn.separator')}
               </FieldSeparator>
               <Field className='grid grid-cols-3 gap-4'>
                 <Button variant='outline' type='button' disabled={isLoading}>
@@ -113,7 +123,7 @@ export function UserAuthForm({
                       fill='currentColor'
                     />
                   </svg>
-                  <span className='sr-only'>Login with Apple</span>
+                  <span className='sr-only'>{t('auth.signIn.socialApple')}</span>
                 </Button>
                 <Button variant='outline' type='button' disabled={isLoading}>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
@@ -122,7 +132,7 @@ export function UserAuthForm({
                       fill='currentColor'
                     />
                   </svg>
-                  <span className='sr-only'>Login with Google</span>
+                  <span className='sr-only'>{t('auth.signIn.socialGoogle')}</span>
                 </Button>
                 <Button variant='outline' type='button' disabled={isLoading}>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
@@ -131,27 +141,29 @@ export function UserAuthForm({
                       fill='currentColor'
                     />
                   </svg>
-                  <span className='sr-only'>Login with Meta</span>
+                  <span className='sr-only'>{t('auth.signIn.socialMeta')}</span>
                 </Button>
               </Field>
               <FieldDescription className='text-center'>
-                Don&apos;t have an account? <Link to='/sign-up'>Sign up</Link>
+                {t('auth.signIn.noAccount')}{' '}
+                <Link to='/sign-up'>{t('auth.signIn.signUp')}</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
           <div className='relative hidden bg-muted md:order-first md:block'>
             <img
               src='/placeholder.svg'
-              alt='Image'
+              alt=''
               className='absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale'
             />
           </div>
         </CardContent>
       </Card>
       <FieldDescription className='px-6 text-center'>
-        By clicking continue, you agree to our{' '}
-        <a href='/terms'>Terms of Service</a> and{' '}
-        <a href='/privacy'>Privacy Policy</a>.
+        {t('auth.legal.prefix')}{' '}
+        <a href='/terms'>{t('auth.legal.terms')}</a>{' '}
+        {t('auth.legal.and')}{' '}
+        <a href='/privacy'>{t('auth.legal.privacy')}</a>.
       </FieldDescription>
     </div>
   )

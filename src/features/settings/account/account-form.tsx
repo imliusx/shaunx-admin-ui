@@ -1,10 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronsUpDown } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { showSubmittedData } from '@/lib/show-submitted-data'
+import { type Language } from '@/lib/i18n/languages'
 import { cn } from '@/lib/utils'
+import { LANGUAGE_OPTIONS, useLanguage } from '@/context/language-provider'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -31,18 +34,6 @@ import {
 } from '@/components/ui/popover'
 import { DatePicker } from '@/components/date-picker'
 
-const languages = [
-  { label: 'English', value: 'en' },
-  { label: 'French', value: 'fr' },
-  { label: 'German', value: 'de' },
-  { label: 'Spanish', value: 'es' },
-  { label: 'Portuguese', value: 'pt' },
-  { label: 'Russian', value: 'ru' },
-  { label: 'Japanese', value: 'ja' },
-  { label: 'Korean', value: 'ko' },
-  { label: 'Chinese', value: 'zh' },
-] as const
-
 const accountFormSchema = z.object({
   name: z
     .string()
@@ -55,17 +46,21 @@ const accountFormSchema = z.object({
 
 type AccountFormValues = z.infer<typeof accountFormSchema>
 
-// This can come from your database or API.
-const defaultValues: Partial<AccountFormValues> = {
-  name: '',
-}
-
 export function AccountForm() {
+  const { t } = useTranslation()
+  const { language, setLanguage } = useLanguage()
   const [languageOpen, setLanguageOpen] = useState(false)
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
-    defaultValues,
+    defaultValues: {
+      name: '',
+      language,
+    },
   })
+
+  useEffect(() => {
+    form.setValue('language', language)
+  }, [form, language])
 
   function onSubmit(data: AccountFormValues) {
     showSubmittedData(data)
@@ -79,13 +74,15 @@ export function AccountForm() {
           name='name'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t('settings.accountForm.name')}</FormLabel>
               <FormControl>
-                <Input placeholder='Your name' {...field} />
+                <Input
+                  placeholder={t('settings.accountForm.namePlaceholder')}
+                  {...field}
+                />
               </FormControl>
               <FormDescription>
-                This is the name that will be displayed on your profile and in
-                emails.
+                {t('settings.accountForm.nameDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -96,10 +93,10 @@ export function AccountForm() {
           name='dob'
           render={({ field }) => (
             <FormItem className='flex flex-col'>
-              <FormLabel>Date of birth</FormLabel>
+              <FormLabel>{t('settings.accountForm.dob')}</FormLabel>
               <DatePicker selected={field.value} onSelect={field.onChange} />
               <FormDescription>
-                Your date of birth is used to calculate your age.
+                {t('settings.accountForm.dobDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -110,7 +107,7 @@ export function AccountForm() {
           name='language'
           render={({ field }) => (
             <FormItem className='flex flex-col'>
-              <FormLabel>Language</FormLabel>
+              <FormLabel>{t('settings.accountForm.language')}</FormLabel>
               <Popover open={languageOpen} onOpenChange={setLanguageOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -124,10 +121,12 @@ export function AccountForm() {
                       )}
                     >
                       {field.value
-                        ? languages.find(
-                            (language) => language.value === field.value
-                          )?.label
-                        : 'Select language'}
+                        ? t(
+                            LANGUAGE_OPTIONS.find(
+                              (option) => option.value === field.value
+                            )?.labelKey ?? 'settings.accountForm.selectLanguage'
+                          )
+                        : t('settings.accountForm.selectLanguage')}
                       <ChevronsUpDown
                         data-icon='inline-end'
                         className='opacity-50'
@@ -137,24 +136,29 @@ export function AccountForm() {
                 </PopoverTrigger>
                 <PopoverContent className='w-50 p-0' align='start'>
                   <Command>
-                    <CommandInput placeholder='Search language...' />
+                    <CommandInput
+                      placeholder={t('settings.accountForm.searchLanguage')}
+                    />
                     <CommandList className='max-h-80'>
-                      <CommandEmpty>No language found.</CommandEmpty>
+                      <CommandEmpty>
+                        {t('settings.accountForm.emptyLanguage')}
+                      </CommandEmpty>
                       <CommandGroup>
-                        {languages.map((language) => (
+                        {LANGUAGE_OPTIONS.map((option) => (
                           <CommandItem
-                            key={language.value}
-                            value={language.label}
-                            data-checked={language.value === field.value}
+                            key={option.value}
+                            value={t(option.labelKey)}
+                            data-checked={option.value === field.value}
                             className='rounded-md'
                             onSelect={() => {
-                              form.setValue('language', language.value, {
+                              form.setValue('language', option.value, {
                                 shouldValidate: true,
                               })
+                              setLanguage(option.value as Language)
                               setLanguageOpen(false)
                             }}
                           >
-                            {language.label}
+                            {t(option.labelKey)}
                           </CommandItem>
                         ))}
                       </CommandGroup>
@@ -163,13 +167,13 @@ export function AccountForm() {
                 </PopoverContent>
               </Popover>
               <FormDescription>
-                This is the language that will be used in the dashboard.
+                {t('settings.accountForm.languageDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type='submit'>Update account</Button>
+        <Button type='submit'>{t('settings.accountForm.update')}</Button>
       </form>
     </Form>
   )

@@ -1,4 +1,5 @@
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { useTranslation } from 'react-i18next'
 import {
   ChartContainer,
   ChartLegend,
@@ -46,18 +47,19 @@ const data = [
   },
 ]
 
-const chartConfig = {
-  clicks: {
-    label: 'Clicks',
-    color: 'var(--chart-1)',
-  },
-  uniques: {
-    label: 'Unique visitors',
-    color: 'var(--chart-2)',
-  },
-} satisfies ChartConfig
-
 export function AnalyticsChart() {
+  const { t } = useTranslation()
+  const chartConfig = {
+    clicks: {
+      label: t('dashboard.chart.clicks'),
+      color: 'var(--chart-1)',
+    },
+    uniques: {
+      label: t('dashboard.chart.uniqueVisitors'),
+      color: 'var(--chart-2)',
+    },
+  } satisfies ChartConfig
+
   return (
     <ChartContainer config={chartConfig} className='h-[300px] w-full'>
       <AreaChart accessibilityLayer data={data}>

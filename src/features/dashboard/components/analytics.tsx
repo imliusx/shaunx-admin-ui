@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { useTranslation } from 'react-i18next'
 import {
   ChartContainer,
   ChartTooltip,
@@ -21,33 +22,35 @@ const referrersData = [
   { name: 'Blog', value: 104 },
 ]
 
-const referrersConfig = {
-  value: {
-    label: 'Visitors',
-    color: 'var(--chart-1)',
-  },
-} satisfies ChartConfig
-
 const devicesData = [
   { name: 'Desktop', value: 74 },
   { name: 'Mobile', value: 22 },
   { name: 'Tablet', value: 4 },
 ]
 
-const devicesConfig = {
-  value: {
-    label: 'Share',
-    color: 'var(--chart-2)',
-  },
-} satisfies ChartConfig
-
 export function Analytics() {
+  const { t } = useTranslation()
+  const referrersConfig = {
+    value: {
+      label: t('dashboard.chart.visitors'),
+      color: 'var(--chart-1)',
+    },
+  } satisfies ChartConfig
+  const devicesConfig = {
+    value: {
+      label: t('dashboard.chart.share'),
+      color: 'var(--chart-2)',
+    },
+  } satisfies ChartConfig
+
   return (
     <div className='flex flex-col gap-4'>
       <Card>
         <CardHeader>
-          <CardTitle>Traffic Overview</CardTitle>
-          <CardDescription>Weekly clicks and unique visitors</CardDescription>
+          <CardTitle>{t('dashboard.cards.trafficOverview')}</CardTitle>
+          <CardDescription>
+            {t('dashboard.cards.trafficOverviewDescription')}
+          </CardDescription>
         </CardHeader>
         <CardContent className='px-6'>
           <AnalyticsChart />
@@ -56,7 +59,9 @@ export function Analytics() {
       <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Total Clicks</CardTitle>
+            <CardTitle className='text-sm font-medium'>
+              {t('dashboard.cards.totalClicks')}
+            </CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
@@ -73,13 +78,15 @@ export function Analytics() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>1,248</div>
-            <p className='text-xs text-muted-foreground'>+12.4% vs last week</p>
+            <p className='text-xs text-muted-foreground'>
+              {t('dashboard.cards.totalClicksDelta')}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm font-medium'>
-              Unique Visitors
+              {t('dashboard.cards.uniqueVisitors')}
             </CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -97,12 +104,16 @@ export function Analytics() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>832</div>
-            <p className='text-xs text-muted-foreground'>+5.8% vs last week</p>
+            <p className='text-xs text-muted-foreground'>
+              {t('dashboard.cards.uniqueVisitorsDelta')}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Bounce Rate</CardTitle>
+            <CardTitle className='text-sm font-medium'>
+              {t('dashboard.cards.bounceRate')}
+            </CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
@@ -118,12 +129,16 @@ export function Analytics() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>42%</div>
-            <p className='text-xs text-muted-foreground'>-3.2% vs last week</p>
+            <p className='text-xs text-muted-foreground'>
+              {t('dashboard.cards.bounceRateDelta')}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Avg. Session</CardTitle>
+            <CardTitle className='text-sm font-medium'>
+              {t('dashboard.cards.avgSession')}
+            </CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
@@ -140,15 +155,19 @@ export function Analytics() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>3m 24s</div>
-            <p className='text-xs text-muted-foreground'>+18s vs last week</p>
+            <p className='text-xs text-muted-foreground'>
+              {t('dashboard.cards.avgSessionDelta')}
+            </p>
           </CardContent>
         </Card>
       </div>
       <div className='grid grid-cols-1 gap-4 lg:grid-cols-7'>
         <Card className='col-span-1 lg:col-span-4'>
           <CardHeader>
-            <CardTitle>Referrers</CardTitle>
-            <CardDescription>Top sources driving traffic</CardDescription>
+            <CardTitle>{t('dashboard.cards.referrers')}</CardTitle>
+            <CardDescription>
+              {t('dashboard.cards.referrersDescription')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <MetricsBarChart
@@ -160,8 +179,10 @@ export function Analytics() {
         </Card>
         <Card className='col-span-1 lg:col-span-3'>
           <CardHeader>
-            <CardTitle>Devices</CardTitle>
-            <CardDescription>How users access your app</CardDescription>
+            <CardTitle>{t('dashboard.cards.devices')}</CardTitle>
+            <CardDescription>
+              {t('dashboard.cards.devicesDescription')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <MetricsBarChart

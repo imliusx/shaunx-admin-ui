@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from '@tanstack/react-router'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { sleep, cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -17,6 +18,7 @@ export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
+  const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -28,20 +30,20 @@ export function SignUpForm({
     const confirmPassword = String(formData.get('confirm-password') ?? '')
 
     if (password !== confirmPassword) {
-      toast.error("Passwords don't match.")
+      toast.error(t('auth.signUp.passwordMismatch'))
       return
     }
 
     setIsLoading(true)
 
-    const signUpPromise = sleep(2000)
-      .then(() => `Account created for ${email}.`)
-      .finally(() => setIsLoading(false))
+    const signUpPromise = sleep(2000).then(() => email).finally(() => {
+      setIsLoading(false)
+    })
 
     toast.promise(signUpPromise, {
-      loading: 'Creating account...',
-      success: (message) => message,
-      error: 'Error',
+      loading: t('auth.signUp.toastLoading'),
+      success: (email) => t('auth.signUp.toastSuccess', { email }),
+      error: t('auth.signUp.toastError'),
     })
   }
 
@@ -52,13 +54,17 @@ export function SignUpForm({
           <form className='p-6 md:order-last md:p-8' onSubmit={onSubmit}>
             <FieldGroup>
               <div className='flex flex-col items-center gap-2 text-center'>
-                <h1 className='text-2xl font-bold'>Create your account</h1>
+                <h1 className='text-2xl font-bold'>
+                  {t('auth.signUp.title')}
+                </h1>
                 <p className='text-sm text-balance text-muted-foreground'>
-                  Enter your email below to create your account
+                  {t('auth.signUp.description')}
                 </p>
               </div>
               <Field>
-                <FieldLabel htmlFor='email'>Email</FieldLabel>
+                <FieldLabel htmlFor='email'>
+                  {t('auth.signUp.email')}
+                </FieldLabel>
                 <Input
                   id='email'
                   name='email'
@@ -67,14 +73,15 @@ export function SignUpForm({
                   required
                 />
                 <FieldDescription>
-                  We&apos;ll use this to contact you. We will not share your
-                  email with anyone else.
+                  {t('auth.signUp.emailDescription')}
                 </FieldDescription>
               </Field>
               <Field>
                 <Field className='grid grid-cols-2 gap-4'>
                   <Field>
-                    <FieldLabel htmlFor='password'>Password</FieldLabel>
+                    <FieldLabel htmlFor='password'>
+                      {t('auth.signUp.password')}
+                    </FieldLabel>
                     <Input
                       id='password'
                       name='password'
@@ -85,7 +92,7 @@ export function SignUpForm({
                   </Field>
                   <Field>
                     <FieldLabel htmlFor='confirm-password'>
-                      Confirm Password
+                      {t('auth.signUp.confirmPassword')}
                     </FieldLabel>
                     <Input
                       id='confirm-password'
@@ -97,16 +104,18 @@ export function SignUpForm({
                   </Field>
                 </Field>
                 <FieldDescription>
-                  Must be at least 8 characters long.
+                  {t('auth.signUp.passwordDescription')}
                 </FieldDescription>
               </Field>
               <Field>
                 <Button type='submit' disabled={isLoading}>
-                  {isLoading ? 'Creating account...' : 'Create Account'}
+                  {isLoading
+                    ? t('auth.signUp.submitting')
+                    : t('auth.signUp.submit')}
                 </Button>
               </Field>
               <FieldSeparator className='*:data-[slot=field-separator-content]:bg-popover'>
-                Or continue with
+                {t('auth.signUp.separator')}
               </FieldSeparator>
               <Field className='grid grid-cols-3 gap-4'>
                 <Button variant='outline' type='button' disabled={isLoading}>
@@ -116,7 +125,7 @@ export function SignUpForm({
                       fill='currentColor'
                     />
                   </svg>
-                  <span className='sr-only'>Sign up with Apple</span>
+                  <span className='sr-only'>{t('auth.signUp.socialApple')}</span>
                 </Button>
                 <Button variant='outline' type='button' disabled={isLoading}>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
@@ -125,7 +134,7 @@ export function SignUpForm({
                       fill='currentColor'
                     />
                   </svg>
-                  <span className='sr-only'>Sign up with Google</span>
+                  <span className='sr-only'>{t('auth.signUp.socialGoogle')}</span>
                 </Button>
                 <Button variant='outline' type='button' disabled={isLoading}>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>
@@ -134,27 +143,29 @@ export function SignUpForm({
                       fill='currentColor'
                     />
                   </svg>
-                  <span className='sr-only'>Sign up with Meta</span>
+                  <span className='sr-only'>{t('auth.signUp.socialMeta')}</span>
                 </Button>
               </Field>
               <FieldDescription className='text-center'>
-                Already have an account? <Link to='/sign-in'>Sign in</Link>
+                {t('auth.signUp.hasAccount')}{' '}
+                <Link to='/sign-in'>{t('auth.signUp.signIn')}</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
           <div className='relative hidden bg-muted md:order-first md:block'>
             <img
               src='/placeholder.svg'
-              alt='Image'
+              alt=''
               className='absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale'
             />
           </div>
         </CardContent>
       </Card>
       <FieldDescription className='px-6 text-center'>
-        By clicking continue, you agree to our{' '}
-        <a href='/terms'>Terms of Service</a> and{' '}
-        <a href='/privacy'>Privacy Policy</a>.
+        {t('auth.legal.prefix')}{' '}
+        <a href='/terms'>{t('auth.legal.terms')}</a>{' '}
+        {t('auth.legal.and')}{' '}
+        <a href='/privacy'>{t('auth.legal.privacy')}</a>.
       </FieldDescription>
     </div>
   )

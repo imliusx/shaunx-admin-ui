@@ -1,11 +1,12 @@
-import { type ReactNode } from 'react'
-import { Link, useLocation } from '@tanstack/react-router'
-import { ChevronRight } from 'lucide-react'
+import { type ReactNode } from "react"
+import { Link, useLocation } from "@tanstack/react-router"
+import { ChevronRight } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+} from "@/components/ui/collapsible"
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,8 +17,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { Badge } from '../ui/badge'
+} from "@/components/ui/sidebar"
+import { Badge } from "../ui/badge"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,29 +27,31 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu'
-import { cn } from '@/lib/utils'
+} from "../ui/dropdown-menu"
+import { cn } from "@/lib/utils"
 import {
   type NavCollapsible,
   type NavItem,
   type NavLink,
   type NavGroup as NavGroupProps,
-} from './types'
+} from "./types"
 
 export function NavGroup({ title, items }: NavGroupProps) {
+  const { t } = useTranslation()
   const { state, isMobile } = useSidebar()
   const href = useLocation({ select: (location) => location.href })
+  const label = t(`navigation.${title}`, { defaultValue: title })
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>{title}</SidebarGroupLabel>
-      <SidebarMenu className='gap-1'>
+      <SidebarGroupLabel>{label}</SidebarGroupLabel>
+      <SidebarMenu className="gap-1">
         {items.map((item) => {
           const key = `${item.title}-${item.url}`
 
           if (!item.items)
             return <SidebarMenuLink key={key} item={item} href={href} />
 
-          if (state === 'collapsed' && !isMobile)
+          if (state === "collapsed" && !isMobile)
             return (
               <SidebarMenuCollapsedDropdown key={key} item={item} href={href} />
             )
@@ -61,21 +64,23 @@ export function NavGroup({ title, items }: NavGroupProps) {
 }
 
 function NavBadge({ children }: { children: ReactNode }) {
-  return <Badge className='size-5 rounded-full p-0 text-xs'>{children}</Badge>
+  return <Badge className="size-5 rounded-full p-0 text-xs">{children}</Badge>
 }
 
 function SidebarMenuLink({ item, href }: { item: NavLink; href: string }) {
+  const { t } = useTranslation()
   const { setOpenMobile } = useSidebar()
+  const label = t(`navigation.${item.title}`, { defaultValue: item.title })
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
         asChild
         isActive={checkIsActive(href, item)}
-        tooltip={item.title}
+        tooltip={label}
       >
         <Link to={item.url} onClick={() => setOpenMobile(false)}>
           {item.icon && <item.icon />}
-          <span>{item.title}</span>
+          <span>{label}</span>
           {item.badge && <NavBadge>{item.badge}</NavBadge>}
         </Link>
       </SidebarMenuButton>
@@ -90,24 +95,26 @@ function SidebarMenuCollapsible({
   item: NavCollapsible
   href: string
 }) {
+  const { t } = useTranslation()
   const { setOpenMobile } = useSidebar()
+  const label = t(`navigation.${item.title}`, { defaultValue: item.title })
   return (
     <Collapsible
       asChild
       defaultOpen={checkIsActive(href, item, true)}
-      className='group/collapsible'
+      className="group/collapsible"
     >
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip={item.title}>
+          <SidebarMenuButton tooltip={label}>
             {item.icon && <item.icon />}
-            <span>{item.title}</span>
+            <span>{label}</span>
             {item.badge && <NavBadge>{item.badge}</NavBadge>}
-            <ChevronRight className='ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 rtl:rotate-180' />
+            <ChevronRight className="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 rtl:rotate-180" />
           </SidebarMenuButton>
         </CollapsibleTrigger>
-        <CollapsibleContent className='CollapsibleContent'>
-          <SidebarMenuSub>
+        <CollapsibleContent className="CollapsibleContent">
+          <SidebarMenuSub className="mt-1 py-0">
             {item.items.map((subItem) => (
               <SidebarMenuSubItem key={subItem.title}>
                 <SidebarMenuSubButton
@@ -116,7 +123,11 @@ function SidebarMenuCollapsible({
                 >
                   <Link to={subItem.url} onClick={() => setOpenMobile(false)}>
                     {subItem.icon && <subItem.icon />}
-                    <span>{subItem.title}</span>
+                    <span>
+                      {t(`navigation.${subItem.title}`, {
+                        defaultValue: subItem.title,
+                      })}
+                    </span>
                     {subItem.badge && <NavBadge>{subItem.badge}</NavBadge>}
                   </Link>
                 </SidebarMenuSubButton>
@@ -136,28 +147,30 @@ function SidebarMenuCollapsedDropdown({
   item: NavCollapsible
   href: string
 }) {
+  const { t } = useTranslation()
+  const label = t(`navigation.${item.title}`, { defaultValue: item.title })
   return (
     <SidebarMenuItem>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton
-            tooltip={item.title}
+            tooltip={label}
             isActive={checkIsActive(href, item)}
           >
             {item.icon && <item.icon />}
-            <span>{item.title}</span>
+            <span>{label}</span>
             {item.badge && <NavBadge>{item.badge}</NavBadge>}
-            <ChevronRight className='ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+            <ChevronRight className="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          side='right'
-          align='start'
+          side="right"
+          align="start"
           sideOffset={4}
-          className='w-max min-w-32 rounded-lg'
+          className="w-max min-w-32 rounded-lg"
         >
-          <DropdownMenuLabel className='whitespace-nowrap'>
-            {item.title} {item.badge ? `(${item.badge})` : ''}
+          <DropdownMenuLabel className="whitespace-nowrap">
+            {label} {item.badge ? `(${item.badge})` : ""}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
@@ -166,13 +179,18 @@ function SidebarMenuCollapsedDropdown({
                 <Link
                   to={sub.url}
                   className={cn(
-                    checkIsActive(href, sub) && 'bg-foreground/10 text-foreground'
+                    checkIsActive(href, sub) &&
+                      "bg-foreground/10 text-foreground"
                   )}
                 >
                   {sub.icon && <sub.icon />}
-                  <span className='whitespace-nowrap'>{sub.title}</span>
+                  <span className="whitespace-nowrap">
+                    {t(`navigation.${sub.title}`, {
+                      defaultValue: sub.title,
+                    })}
+                  </span>
                   {sub.badge && (
-                    <span className='ms-auto text-xs'>{sub.badge}</span>
+                    <span className="ms-auto text-xs">{sub.badge}</span>
                   )}
                 </Link>
               </DropdownMenuItem>
@@ -187,10 +205,10 @@ function SidebarMenuCollapsedDropdown({
 function checkIsActive(href: string, item: NavItem, mainNav = false) {
   return (
     href === item.url || // /endpint?search=param
-    href.split('?')[0] === item.url || // endpoint
+    href.split("?")[0] === item.url || // endpoint
     !!item?.items?.filter((i) => i.url === href).length || // if child nav is active
     (mainNav &&
-      href.split('/')[1] !== '' &&
-      href.split('/')[1] === item?.url?.split('/')[1])
+      href.split("/")[1] !== "" &&
+      href.split("/")[1] === item?.url?.split("/")[1])
   )
 }

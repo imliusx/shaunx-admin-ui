@@ -1,7 +1,9 @@
 import { Outlet } from '@tanstack/react-router'
 import { Monitor, Bell, Palette, Wrench, UserCog } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Separator } from '@/components/ui/separator'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitch } from '@/components/language-switch'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -38,11 +40,14 @@ const sidebarNavItems = [
 ]
 
 export function Settings() {
+  const { t } = useTranslation()
+
   return (
     <>
       {/* ===== Top Heading ===== */}
       <Header>
         <Search className='me-auto' />
+        <LanguageSwitch />
         <ThemeSwitch />
         <ConfigDrawer />
         <ProfileDropdown />
@@ -51,10 +56,10 @@ export function Settings() {
       <Main fixed>
         <div className='space-y-0.5'>
           <h1 className='text-2xl font-bold tracking-tight md:text-3xl'>
-            Settings
+            {t('settings.title')}
           </h1>
           <p className='text-muted-foreground'>
-            Manage your account settings and set e-mail preferences.
+            {t('settings.description')}
           </p>
         </div>
         <Separator className='my-4 lg:my-6' />

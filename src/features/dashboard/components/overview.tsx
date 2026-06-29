@@ -1,4 +1,5 @@
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { useTranslation } from 'react-i18next'
 import {
   ChartContainer,
   ChartTooltip,
@@ -57,14 +58,15 @@ const data = [
   },
 ]
 
-const chartConfig = {
-  total: {
-    label: 'Revenue',
-    color: 'var(--chart-1)',
-  },
-} satisfies ChartConfig
-
 export function Overview() {
+  const { t } = useTranslation()
+  const chartConfig = {
+    total: {
+      label: t('dashboard.chart.revenue'),
+      color: 'var(--chart-1)',
+    },
+  } satisfies ChartConfig
+
   return (
     <ChartContainer config={chartConfig} className='h-[350px] w-full'>
       <BarChart accessibilityLayer data={data}>

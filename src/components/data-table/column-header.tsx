@@ -3,17 +3,18 @@ import {
   ArrowUpIcon,
   CaretSortIcon,
   EyeNoneIcon,
-} from '@radix-ui/react-icons'
-import { type Column } from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+} from "@radix-ui/react-icons"
+import { type Column } from "@tanstack/react-table"
+import { useTranslation } from "react-i18next"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu"
 
 type DataTableColumnHeaderProps<TData, TValue> =
   React.HTMLAttributes<HTMLDivElement> & {
@@ -26,44 +27,46 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
+  const { t } = useTranslation()
+
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>
   }
 
   return (
-    <div className={cn('flex items-center space-x-2', className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant='ghost'
-            size='sm'
-            className='h-8 data-[state=open]:bg-accent'
+            variant="ghost"
+            size="sm"
+            className="h-8 data-[state=open]:bg-accent"
           >
             <span>{title}</span>
-            {column.getIsSorted() === 'desc' ? (
-              <ArrowDownIcon className='ms-2 h-4 w-4' />
-            ) : column.getIsSorted() === 'asc' ? (
-              <ArrowUpIcon className='ms-2 h-4 w-4' />
+            {column.getIsSorted() === "desc" ? (
+              <ArrowDownIcon className="ms-2 h-4 w-4" />
+            ) : column.getIsSorted() === "asc" ? (
+              <ArrowUpIcon className="ms-2 h-4 w-4" />
             ) : (
-              <CaretSortIcon className='ms-2 h-4 w-4' />
+              <CaretSortIcon className="ms-2 h-4 w-4" />
             )}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align='start'>
+        <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ArrowUpIcon className='size-3.5 text-muted-foreground/70' />
-            Asc
+            <ArrowUpIcon className="size-3.5 text-muted-foreground/70" />
+            {t("table.column.asc")}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ArrowDownIcon className='size-3.5 text-muted-foreground/70' />
-            Desc
+            <ArrowDownIcon className="size-3.5 text-muted-foreground/70" />
+            {t("table.column.desc")}
           </DropdownMenuItem>
           {column.getCanHide() && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-                <EyeNoneIcon className='size-3.5 text-muted-foreground/70' />
-                Hide
+                <EyeNoneIcon className="size-3.5 text-muted-foreground/70" />
+                {t("table.column.hide")}
               </DropdownMenuItem>
             </>
           )}

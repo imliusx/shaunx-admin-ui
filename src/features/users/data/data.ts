@@ -15,6 +15,7 @@ export const userStatuses = new Map<
   UserStatus,
   {
     label: string
+    labelKey: string
     icon: LucideIcon
     iconClassName?: string
   }
@@ -23,6 +24,7 @@ export const userStatuses = new Map<
     "active",
     {
       label: "Active",
+      labelKey: "users.status.active",
       icon: CircleCheck,
       iconClassName: "fill-green-500 text-background",
     },
@@ -31,6 +33,7 @@ export const userStatuses = new Map<
     "inactive",
     {
       label: "Inactive",
+      labelKey: "users.status.inactive",
       icon: CircleMinus,
       iconClassName: "fill-muted-foreground text-background",
     },
@@ -39,6 +42,7 @@ export const userStatuses = new Map<
     "invited",
     {
       label: "Invited",
+      labelKey: "users.status.invited",
       icon: CircleEllipsis,
       iconClassName: "fill-sky-500 text-background",
     },
@@ -47,6 +51,7 @@ export const userStatuses = new Map<
     "suspended",
     {
       label: "Suspended",
+      labelKey: "users.status.suspended",
       icon: CircleX,
       iconClassName: "fill-destructive text-background",
     },
@@ -56,21 +61,25 @@ export const userStatuses = new Map<
 export const roles = [
   {
     label: "Superadmin",
+    labelKey: "users.roles.superadmin",
     value: "superadmin",
     icon: Shield,
   },
   {
     label: "Admin",
+    labelKey: "users.roles.admin",
     value: "admin",
     icon: UserCheck,
   },
   {
     label: "Manager",
+    labelKey: "users.roles.manager",
     value: "manager",
     icon: Users,
   },
   {
     label: "Cashier",
+    labelKey: "users.roles.cashier",
     value: "cashier",
     icon: CreditCard,
   },

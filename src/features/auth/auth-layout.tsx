@@ -1,4 +1,5 @@
 import { Palette } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
   COLOR_THEME_OPTIONS,
   type ColorTheme,
@@ -13,6 +14,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeSwitch } from '@/components/theme-switch'
 
 type AuthLayoutProps = {
@@ -24,6 +26,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
     <div className='relative flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
       <div className='absolute top-4 right-4 flex items-center gap-1 md:top-6 md:right-6'>
         <ColorThemeMenu />
+        <LanguageSwitch />
         <ThemeSwitch />
       </div>
       {children}
@@ -32,12 +35,13 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 }
 
 function ColorThemeMenu() {
+  const { t } = useTranslation()
   const { colorTheme, setColorTheme } = useColorTheme()
 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon' aria-label='Select color theme'>
+        <Button variant='ghost' size='icon' aria-label={t('config.selectColor')}>
           <Palette className='size-[1.2rem]' aria-hidden='true' />
         </Button>
       </DropdownMenuTrigger>
@@ -55,7 +59,7 @@ function ColorThemeMenu() {
                   option.swatchClassName
                 )}
               />
-              {option.label}
+              {t(`config.colors.${option.value}`)}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>

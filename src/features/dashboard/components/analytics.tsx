@@ -5,11 +5,45 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from '@/components/ui/chart'
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts'
 import { AnalyticsChart } from './analytics-chart'
+
+const referrersData = [
+  { name: 'Direct', value: 512 },
+  { name: 'Product Hunt', value: 238 },
+  { name: 'Twitter', value: 174 },
+  { name: 'Blog', value: 104 },
+]
+
+const referrersConfig = {
+  value: {
+    label: 'Visitors',
+    color: 'var(--chart-1)',
+  },
+} satisfies ChartConfig
+
+const devicesData = [
+  { name: 'Desktop', value: 74 },
+  { name: 'Mobile', value: 22 },
+  { name: 'Tablet', value: 4 },
+]
+
+const devicesConfig = {
+  value: {
+    label: 'Share',
+    color: 'var(--chart-2)',
+  },
+} satisfies ChartConfig
 
 export function Analytics() {
   return (
-    <div className='space-y-4'>
+    <div className='flex flex-col gap-4'>
       <Card>
         <CardHeader>
           <CardTitle>Traffic Overview</CardTitle>
@@ -117,14 +151,9 @@ export function Analytics() {
             <CardDescription>Top sources driving traffic</CardDescription>
           </CardHeader>
           <CardContent>
-            <SimpleBarList
-              items={[
-                { name: 'Direct', value: 512 },
-                { name: 'Product Hunt', value: 238 },
-                { name: 'Twitter', value: 174 },
-                { name: 'Blog', value: 104 },
-              ]}
-              barClass='bg-primary'
+            <MetricsBarChart
+              data={referrersData}
+              config={referrersConfig}
               valueFormatter={(n) => `${n}`}
             />
           </CardContent>
@@ -135,13 +164,9 @@ export function Analytics() {
             <CardDescription>How users access your app</CardDescription>
           </CardHeader>
           <CardContent>
-            <SimpleBarList
-              items={[
-                { name: 'Desktop', value: 74 },
-                { name: 'Mobile', value: 22 },
-                { name: 'Tablet', value: 4 },
-              ]}
-              barClass='bg-muted-foreground'
+            <MetricsBarChart
+              data={devicesData}
+              config={devicesConfig}
               valueFormatter={(n) => `${n}%`}
             />
           </CardContent>
@@ -151,39 +176,47 @@ export function Analytics() {
   )
 }
 
-function SimpleBarList({
-  items,
+function MetricsBarChart({
+  data,
+  config,
   valueFormatter,
-  barClass,
 }: {
-  items: { name: string; value: number }[]
+  data: { name: string; value: number }[]
+  config: ChartConfig
   valueFormatter: (n: number) => string
-  barClass: string
 }) {
-  const max = Math.max(...items.map((i) => i.value), 1)
   return (
-    <ul className='space-y-3'>
-      {items.map((i) => {
-        const width = `${Math.round((i.value / max) * 100)}%`
-        return (
-          <li key={i.name} className='flex items-center justify-between gap-3'>
-            <div className='min-w-0 flex-1'>
-              <div className='mb-1 truncate text-xs text-muted-foreground'>
-                {i.name}
-              </div>
-              <div className='h-2.5 w-full rounded-full bg-muted'>
-                <div
-                  className={`h-2.5 rounded-full ${barClass}`}
-                  style={{ width }}
-                />
-              </div>
-            </div>
-            <div className='ps-2 text-xs font-medium tabular-nums'>
-              {valueFormatter(i.value)}
-            </div>
-          </li>
-        )
-      })}
-    </ul>
+    <ChartContainer config={config} className='h-[220px] w-full'>
+      <BarChart
+        accessibilityLayer
+        data={data}
+        layout='vertical'
+        margin={{ right: 48 }}
+      >
+        <CartesianGrid horizontal={false} />
+        <YAxis
+          dataKey='name'
+          type='category'
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+          width={90}
+        />
+        <XAxis dataKey='value' type='number' hide />
+        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <Bar dataKey='value' fill='var(--color-value)' radius={6}>
+          <LabelList
+            dataKey='value'
+            position='right'
+            offset={8}
+            className='fill-foreground'
+            fontSize={12}
+            formatter={(value) =>
+              typeof value === 'number' ? valueFormatter(value) : value
+            }
+          />
+        </Bar>
+      </BarChart>
+    </ChartContainer>
   )
 }

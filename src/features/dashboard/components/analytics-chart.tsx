@@ -1,4 +1,12 @@
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from '@/components/ui/chart'
 
 const data = [
   {
@@ -38,40 +46,83 @@ const data = [
   },
 ]
 
+const chartConfig = {
+  clicks: {
+    label: 'Clicks',
+    color: 'var(--chart-1)',
+  },
+  uniques: {
+    label: 'Unique visitors',
+    color: 'var(--chart-2)',
+  },
+} satisfies ChartConfig
+
 export function AnalyticsChart() {
   return (
-    <ResponsiveContainer width='100%' height={300}>
-      <AreaChart data={data}>
+    <ChartContainer config={chartConfig} className='h-[300px] w-full'>
+      <AreaChart accessibilityLayer data={data}>
+        <defs>
+          <linearGradient id='fillClicks' x1='0' y1='0' x2='0' y2='1'>
+            <stop
+              offset='5%'
+              stopColor='var(--color-clicks)'
+              stopOpacity={0.8}
+            />
+            <stop
+              offset='95%'
+              stopColor='var(--color-clicks)'
+              stopOpacity={0.1}
+            />
+          </linearGradient>
+          <linearGradient id='fillUniques' x1='0' y1='0' x2='0' y2='1'>
+            <stop
+              offset='5%'
+              stopColor='var(--color-uniques)'
+              stopOpacity={0.8}
+            />
+            <stop
+              offset='95%'
+              stopColor='var(--color-uniques)'
+              stopOpacity={0.1}
+            />
+          </linearGradient>
+        </defs>
+        <CartesianGrid vertical={false} />
         <XAxis
           dataKey='name'
-          stroke='#888888'
-          fontSize={12}
           tickLine={false}
           axisLine={false}
+          tickMargin={10}
         />
         <YAxis
-          stroke='#888888'
-          fontSize={12}
           tickLine={false}
           axisLine={false}
+          tickMargin={8}
+        />
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent indicator='line' />}
         />
         <Area
-          type='monotone'
+          type='natural'
           dataKey='clicks'
-          stroke='currentColor'
-          className='text-primary'
-          fill='currentColor'
-          fillOpacity={0.15}
+          fill='url(#fillClicks)'
+          fillOpacity={0.4}
+          stroke='var(--color-clicks)'
+          strokeWidth={2}
+          stackId='a'
         />
         <Area
-          type='monotone'
+          type='natural'
           dataKey='uniques'
-          stroke='currentColor'
-          className='text-muted-foreground'
-          fill='currentColor'
-          fillOpacity={0.1}
+          fill='url(#fillUniques)'
+          fillOpacity={0.4}
+          stroke='var(--color-uniques)'
+          strokeWidth={2}
+          stackId='a'
         />
+        <ChartLegend content={<ChartLegendContent />} />
       </AreaChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   )
 }

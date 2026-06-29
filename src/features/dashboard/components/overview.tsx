@@ -1,4 +1,10 @@
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from '@/components/ui/chart'
 
 const data = [
   {
@@ -51,32 +57,34 @@ const data = [
   },
 ]
 
+const chartConfig = {
+  total: {
+    label: 'Revenue',
+    color: 'var(--chart-1)',
+  },
+} satisfies ChartConfig
+
 export function Overview() {
   return (
-    <ResponsiveContainer width='100%' height={350}>
-      <BarChart data={data}>
+    <ChartContainer config={chartConfig} className='h-[350px] w-full'>
+      <BarChart accessibilityLayer data={data}>
+        <CartesianGrid vertical={false} />
         <XAxis
           dataKey='name'
-          stroke='#888888'
-          fontSize={12}
           tickLine={false}
           axisLine={false}
+          tickMargin={10}
         />
         <YAxis
           direction='ltr'
-          stroke='#888888'
-          fontSize={12}
           tickLine={false}
           axisLine={false}
+          tickMargin={8}
           tickFormatter={(value) => `$${value}`}
         />
-        <Bar
-          dataKey='total'
-          fill='currentColor'
-          radius={[4, 4, 0, 0]}
-          className='fill-primary'
-        />
+        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <Bar dataKey='total' fill='var(--color-total)' radius={8} />
       </BarChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   )
 }

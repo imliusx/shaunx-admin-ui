@@ -203,6 +203,11 @@ export const en = {
       and: "and",
       privacy: "Privacy Policy",
     },
+    validation: {
+      emailInvalid: "Please enter a valid email address.",
+      passwordMin: "Password must be at least 8 characters long.",
+      confirmPasswordRequired: "Please confirm your password.",
+    },
   },
   dashboard: {
     title: "Dashboard",
@@ -730,6 +735,11 @@ export const zhCN = {
       terms: "服务条款",
       and: "和",
       privacy: "隐私政策",
+    },
+    validation: {
+      emailInvalid: "请输入有效的邮箱地址。",
+      passwordMin: "密码长度至少为 8 个字符。",
+      confirmPasswordRequired: "请确认密码。",
     },
   },
   dashboard: {

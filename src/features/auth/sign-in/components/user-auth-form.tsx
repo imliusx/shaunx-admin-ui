@@ -10,11 +10,18 @@ import { Card, CardContent } from '@/components/ui/card'
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+type FieldKey = 'email' | 'password'
+type FieldErrors = Partial<Record<FieldKey, string>>
+type Values = Record<FieldKey, string>
 
 interface UserAuthFormProps extends React.ComponentProps<'div'> {
   redirectTo?: string
@@ -27,14 +34,59 @@ export function UserAuthForm({
 }: UserAuthFormProps) {
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
+  const [values, setValues] = useState<Values>({
+    email: '',
+    password: '',
+  })
+  const [touched, setTouched] = useState<Record<FieldKey, boolean>>({
+    email: false,
+    password: false,
+  })
+  const [errors, setErrors] = useState<FieldErrors>({})
   const navigate = useNavigate()
   const { auth } = useAuthStore()
+
+  function validate(nextValues: Values): FieldErrors {
+    return {
+      email:
+        nextValues.email.trim() && EMAIL_PATTERN.test(nextValues.email)
+          ? undefined
+          : t('auth.validation.emailInvalid'),
+      password:
+        nextValues.password.length >= 8
+          ? undefined
+          : t('auth.validation.passwordMin'),
+    }
+  }
+
+  function fieldError(field: FieldKey) {
+    return touched[field] ? errors[field] : undefined
+  }
+
+  function handleBlur(field: FieldKey) {
+    setTouched((prev) => ({ ...prev, [field]: true }))
+    setErrors(validate(values))
+  }
+
+  function handleChange(field: FieldKey, value: string) {
+    const nextValues = { ...values, [field]: value }
+    setValues(nextValues)
+
+    if (touched[field]) {
+      setErrors(validate(nextValues))
+    }
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const formData = new FormData(event.currentTarget)
-    const email = String(formData.get('email') ?? '')
+    const nextErrors = validate(values)
+    setErrors(nextErrors)
+    setTouched({ email: true, password: true })
+
+    if (nextErrors.email || nextErrors.password) return
+
+    const email = values.email.trim()
 
     setIsLoading(true)
 
@@ -64,7 +116,11 @@ export function UserAuthForm({
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card className='overflow-hidden bg-popover/55 p-0 text-popover-foreground shadow-xl ring-1 ring-foreground/10 backdrop-blur-2xl backdrop-saturate-150'>
         <CardContent className='grid p-0 md:grid-cols-2'>
-          <form className='p-6 md:order-last md:p-8' onSubmit={onSubmit}>
+          <form
+            className='p-6 md:order-last md:p-8'
+            onSubmit={onSubmit}
+            noValidate
+          >
             <FieldGroup>
               <div className='flex flex-col items-center gap-2 text-center'>
                 <h1 className='flex items-center justify-center gap-2 text-2xl font-bold'>
@@ -78,7 +134,7 @@ export function UserAuthForm({
                   {t('auth.signIn.description')}
                 </p>
               </div>
-              <Field>
+              <Field data-invalid={Boolean(fieldError('email'))}>
                 <FieldLabel htmlFor='email'>
                   {t('auth.signIn.email')}
                 </FieldLabel>
@@ -87,10 +143,20 @@ export function UserAuthForm({
                   name='email'
                   type='email'
                   placeholder='m@example.com'
-                  required
+                  autoComplete='email'
+                  value={values.email}
+                  onChange={(event) =>
+                    handleChange('email', event.target.value)
+                  }
+                  onBlur={() => handleBlur('email')}
+                  aria-invalid={Boolean(fieldError('email'))}
+                  disabled={isLoading}
                 />
+                {fieldError('email') ? (
+                  <FieldError>{fieldError('email')}</FieldError>
+                ) : null}
               </Field>
-              <Field>
+              <Field data-invalid={Boolean(fieldError('password'))}>
                 <div className='flex items-center'>
                   <FieldLabel htmlFor='password'>
                     {t('auth.signIn.password')}
@@ -106,9 +172,18 @@ export function UserAuthForm({
                   id='password'
                   name='password'
                   type='password'
-                  minLength={7}
-                  required
+                  autoComplete='current-password'
+                  value={values.password}
+                  onChange={(event) =>
+                    handleChange('password', event.target.value)
+                  }
+                  onBlur={() => handleBlur('password')}
+                  aria-invalid={Boolean(fieldError('password'))}
+                  disabled={isLoading}
                 />
+                {fieldError('password') ? (
+                  <FieldError>{fieldError('password')}</FieldError>
+                ) : null}
               </Field>
               <Field>
                 <Button type='submit' disabled={isLoading}>

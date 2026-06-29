@@ -9,11 +9,23 @@ import { Card, CardContent } from '@/components/ui/card'
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+type FieldKey = 'email' | 'password' | 'confirmPassword'
+type FieldErrors = Partial<Record<FieldKey, string>>
+
+type Values = {
+  email: string
+  password: string
+  confirmPassword: string
+}
 
 export function SignUpForm({
   className,
@@ -21,19 +33,77 @@ export function SignUpForm({
 }: React.ComponentProps<'div'>) {
   const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
+  const [values, setValues] = useState<Values>({
+    email: '',
+    password: '',
+    confirmPassword: '',
+  })
+  const [touched, setTouched] = useState<Record<FieldKey, boolean>>({
+    email: false,
+    password: false,
+    confirmPassword: false,
+  })
+  const [errors, setErrors] = useState<FieldErrors>({})
+
+  function validate(nextValues: Values): FieldErrors {
+    const nextErrors: FieldErrors = {
+      email:
+        nextValues.email.trim() && EMAIL_PATTERN.test(nextValues.email)
+          ? undefined
+          : t('auth.validation.emailInvalid'),
+      password:
+        nextValues.password.length >= 8
+          ? undefined
+          : t('auth.validation.passwordMin'),
+    }
+
+    if (!nextValues.confirmPassword) {
+      nextErrors.confirmPassword = t('auth.validation.confirmPasswordRequired')
+    } else if (nextValues.confirmPassword !== nextValues.password) {
+      nextErrors.confirmPassword = t('auth.signUp.passwordMismatch')
+    }
+
+    return nextErrors
+  }
+
+  function fieldError(field: FieldKey) {
+    return touched[field] ? errors[field] : undefined
+  }
+
+  function handleBlur(field: FieldKey) {
+    setTouched((prev) => ({ ...prev, [field]: true }))
+    setErrors(validate(values))
+  }
+
+  function handleChange(field: FieldKey, value: string) {
+    const nextValues = { ...values, [field]: value }
+    setValues(nextValues)
+
+    if (touched[field] || (field === 'password' && touched.confirmPassword)) {
+      setErrors(validate(nextValues))
+    }
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const formData = new FormData(event.currentTarget)
-    const email = String(formData.get('email') ?? '')
-    const password = String(formData.get('password') ?? '')
-    const confirmPassword = String(formData.get('confirm-password') ?? '')
+    const nextErrors = validate(values)
+    setErrors(nextErrors)
+    setTouched({
+      email: true,
+      password: true,
+      confirmPassword: true,
+    })
 
-    if (password !== confirmPassword) {
-      toast.error(t('auth.signUp.passwordMismatch'))
+    if (
+      nextErrors.email ||
+      nextErrors.password ||
+      nextErrors.confirmPassword
+    ) {
       return
     }
+
+    const email = values.email.trim()
 
     setIsLoading(true)
 
@@ -52,7 +122,11 @@ export function SignUpForm({
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card className='overflow-hidden bg-popover/55 p-0 text-popover-foreground shadow-xl ring-1 ring-foreground/10 backdrop-blur-2xl backdrop-saturate-150'>
         <CardContent className='grid p-0 md:grid-cols-2'>
-          <form className='p-6 md:order-last md:p-8' onSubmit={onSubmit}>
+          <form
+            className='p-6 md:order-last md:p-8'
+            onSubmit={onSubmit}
+            noValidate
+          >
             <FieldGroup>
               <div className='flex flex-col items-center gap-2 text-center'>
                 <h1 className='flex items-center justify-center gap-2 text-2xl font-bold'>
@@ -66,7 +140,7 @@ export function SignUpForm({
                   {t('auth.signUp.description')}
                 </p>
               </div>
-              <Field>
+              <Field data-invalid={Boolean(fieldError('email'))}>
                 <FieldLabel htmlFor='email'>
                   {t('auth.signUp.email')}
                 </FieldLabel>
@@ -75,15 +149,26 @@ export function SignUpForm({
                   name='email'
                   type='email'
                   placeholder='m@example.com'
-                  required
+                  autoComplete='email'
+                  value={values.email}
+                  onChange={(event) =>
+                    handleChange('email', event.target.value)
+                  }
+                  onBlur={() => handleBlur('email')}
+                  aria-invalid={Boolean(fieldError('email'))}
+                  disabled={isLoading}
                 />
-                <FieldDescription>
-                  {t('auth.signUp.emailDescription')}
-                </FieldDescription>
+                {fieldError('email') ? (
+                  <FieldError>{fieldError('email')}</FieldError>
+                ) : (
+                  <FieldDescription>
+                    {t('auth.signUp.emailDescription')}
+                  </FieldDescription>
+                )}
               </Field>
               <Field>
-                <Field className='grid grid-cols-2 gap-4'>
-                  <Field>
+                <FieldGroup className='grid grid-cols-2 gap-4'>
+                  <Field data-invalid={Boolean(fieldError('password'))}>
                     <FieldLabel htmlFor='password'>
                       {t('auth.signUp.password')}
                     </FieldLabel>
@@ -91,11 +176,20 @@ export function SignUpForm({
                       id='password'
                       name='password'
                       type='password'
-                      minLength={8}
-                      required
+                      autoComplete='new-password'
+                      value={values.password}
+                      onChange={(event) =>
+                        handleChange('password', event.target.value)
+                      }
+                      onBlur={() => handleBlur('password')}
+                      aria-invalid={Boolean(fieldError('password'))}
+                      disabled={isLoading}
                     />
+                    {fieldError('password') ? (
+                      <FieldError>{fieldError('password')}</FieldError>
+                    ) : null}
                   </Field>
-                  <Field>
+                  <Field data-invalid={Boolean(fieldError('confirmPassword'))}>
                     <FieldLabel htmlFor='confirm-password'>
                       {t('auth.signUp.confirmPassword')}
                     </FieldLabel>
@@ -103,14 +197,25 @@ export function SignUpForm({
                       id='confirm-password'
                       name='confirm-password'
                       type='password'
-                      minLength={8}
-                      required
+                      autoComplete='new-password'
+                      value={values.confirmPassword}
+                      onChange={(event) =>
+                        handleChange('confirmPassword', event.target.value)
+                      }
+                      onBlur={() => handleBlur('confirmPassword')}
+                      aria-invalid={Boolean(fieldError('confirmPassword'))}
+                      disabled={isLoading}
                     />
+                    {fieldError('confirmPassword') ? (
+                      <FieldError>{fieldError('confirmPassword')}</FieldError>
+                    ) : null}
                   </Field>
-                </Field>
-                <FieldDescription>
-                  {t('auth.signUp.passwordDescription')}
-                </FieldDescription>
+                </FieldGroup>
+                {!fieldError('password') && !fieldError('confirmPassword') ? (
+                  <FieldDescription>
+                    {t('auth.signUp.passwordDescription')}
+                  </FieldDescription>
+                ) : null}
               </Field>
               <Field>
                 <Button type='submit' disabled={isLoading}>

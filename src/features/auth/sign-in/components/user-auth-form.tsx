@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { DraftingCompass as LuDraftingCompass } from 'lucide-react'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/stores/auth-store'
@@ -66,7 +67,11 @@ export function UserAuthForm({
           <form className='p-6 md:order-last md:p-8' onSubmit={onSubmit}>
             <FieldGroup>
               <div className='flex flex-col items-center gap-2 text-center'>
-                <h1 className='text-2xl font-bold'>
+                <h1 className='flex items-center justify-center gap-2 text-2xl font-bold'>
+                  <LuDraftingCompass
+                    className='size-7 text-primary'
+                    aria-hidden='true'
+                  />
                   {t('auth.signIn.title')}
                 </h1>
                 <p className='text-balance text-muted-foreground'>

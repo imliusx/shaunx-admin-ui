@@ -43,7 +43,7 @@ function MissingClerkPubKey() {
   return (
     <AuthenticatedLayout>
       <div className='bg-backgroundh-16 flex justify-between p-4'>
-        <SidebarTrigger variant='outline' className='scale-125 sm:scale-100' />
+        <SidebarTrigger />
         <div className='flex items-center gap-2'>
           <LanguageSwitch />
           <ThemeSwitch />

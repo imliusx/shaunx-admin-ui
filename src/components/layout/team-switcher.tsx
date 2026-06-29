@@ -1,18 +1,7 @@
-import * as React from "react"
-import { ChevronsUpDown, Plus } from "lucide-react"
-import { useTranslation } from "react-i18next"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import type { ElementType } from "react"
+import { Link } from "@tanstack/react-router"
 import {
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
@@ -20,69 +9,31 @@ import {
 type TeamSwitcherProps = {
   teams: {
     name: string
-    logo: React.ElementType
+    logo: ElementType
     plan: string
   }[]
 }
 
 export function TeamSwitcher({ teams }: TeamSwitcherProps) {
-  const { t } = useTranslation()
-  const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const activeTeam = teams[0]
+  const { setOpenMobile } = useSidebar()
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <activeTeam.logo className="size-4" />
-              </div>
-              <div className="grid flex-1 text-start text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {activeTeam.name}
-                </span>
-              </div>
-              <ChevronsUpDown className="ms-auto" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            align="start"
-            side={isMobile ? "bottom" : "right"}
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              {t("team.teams")}
-            </DropdownMenuLabel>
-            {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 rounded-lg p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
-                </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 rounded-lg p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                <Plus className="size-4" />
-              </div>
-              <div className="font-medium text-muted-foreground">
-                {t("team.addTeam")}
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Link
+          to="/"
+          aria-label="Go to dashboard"
+          onClick={() => setOpenMobile(false)}
+          className="flex h-11 w-full select-none items-center gap-1.5 overflow-hidden rounded-lg p-0 text-sidebar-foreground outline-hidden ring-sidebar-ring transition-colors hover:text-sidebar-accent-foreground focus-visible:ring-2 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center"
+        >
+          <div className="flex aspect-square size-8 shrink-0 items-center justify-center text-primary">
+            <activeTeam.logo className="!size-8" />
+          </div>
+          <div className="grid flex-1 text-start text-lg leading-tight group-data-[collapsible=icon]:hidden">
+            <span className="truncate font-semibold">{activeTeam.name}</span>
+          </div>
+        </Link>
       </SidebarMenuItem>
     </SidebarMenu>
   )

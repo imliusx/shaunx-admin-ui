@@ -1,7 +1,6 @@
-import { type SVGProps } from 'react'
+import { type CSSProperties, type SVGProps } from 'react'
 import { Root as Radio, Item } from '@radix-ui/react-radio-group'
 import { CircleCheck, Palette, RotateCcw } from 'lucide-react'
-import { IconDir } from '@/assets/custom/icon-dir'
 import { IconLayoutCompact } from '@/assets/custom/icon-layout-compact'
 import { IconLayoutDefault } from '@/assets/custom/icon-layout-default'
 import { IconLayoutFull } from '@/assets/custom/icon-layout-full'
@@ -11,8 +10,12 @@ import { IconSidebarSidebar } from '@/assets/custom/icon-sidebar-sidebar'
 import { IconThemeDark } from '@/assets/custom/icon-theme-dark'
 import { IconThemeLight } from '@/assets/custom/icon-theme-light'
 import { IconThemeSystem } from '@/assets/custom/icon-theme-system'
+import {
+  COLOR_THEME_OPTIONS,
+  type ColorTheme,
+} from '@/lib/theme/color-theme'
 import { cn } from '@/lib/utils'
-import { useDirection } from '@/context/direction-provider'
+import { useColorTheme } from '@/context/color-theme-provider'
 import { type Collapsible, useLayout } from '@/context/layout-provider'
 import { useTheme } from '@/context/theme-provider'
 import { Button } from '@/components/ui/button'
@@ -29,13 +32,13 @@ import { useSidebar } from './ui/sidebar'
 
 export function ConfigDrawer() {
   const { setOpen } = useSidebar()
-  const { resetDir } = useDirection()
+  const { resetColorTheme } = useColorTheme()
   const { resetTheme } = useTheme()
   const { resetLayout } = useLayout()
 
   const handleReset = () => {
     setOpen(true)
-    resetDir()
+    resetColorTheme()
     resetTheme()
     resetLayout()
   }
@@ -56,13 +59,14 @@ export function ConfigDrawer() {
         </SheetHeader>
         <div className='space-y-6 overflow-y-auto px-4'>
           <ThemeConfig />
+          <ColorConfig />
           <SidebarConfig />
           <LayoutConfig />
-          <DirConfig />
         </div>
-        <SheetFooter className='gap-2'>
+        <SheetFooter className='items-end gap-2'>
           <Button
             variant='destructive'
+            size='sm'
             onClick={handleReset}
             aria-label='Reset all settings to default values'
           >
@@ -133,7 +137,7 @@ function RadioGroupItem({
       <div
         className={cn(
           'relative rounded-[6px] ring-[1px] ring-border',
-          'group-data-[state=checked]:shadow-2xl group-data-[state=checked]:ring-primary',
+          'group-data-[state=checked]:shadow-2xl group-data-[state=checked]:ring-0',
           'group-focus-visible:ring-2'
         )}
         role='img'
@@ -142,7 +146,7 @@ function RadioGroupItem({
       >
         <CircleCheck
           className={cn(
-            'size-6 fill-primary stroke-white',
+            'size-6 fill-primary stroke-primary-foreground',
             'group-data-[state=unchecked]:hidden',
             'absolute top-0 right-0 translate-x-1/2 -translate-y-1/2'
           )}
@@ -206,6 +210,90 @@ function ThemeConfig() {
       </Radio>
       <div id='theme-description' className='sr-only'>
         Choose between system preference, light mode, or dark mode
+      </div>
+    </div>
+  )
+}
+
+function ColorConfig() {
+  const {
+    colorTheme,
+    defaultColorTheme,
+    resetColorTheme,
+    setColorTheme,
+  } = useColorTheme()
+
+  return (
+    <div>
+      <SectionTitle
+        title='Color'
+        showReset={colorTheme !== defaultColorTheme}
+        onReset={resetColorTheme}
+        resetAriaLabel='Reset color theme to default'
+      />
+      <Radio
+        value={colorTheme}
+        onValueChange={(value) => setColorTheme(value as ColorTheme)}
+        className='grid w-full max-w-md grid-cols-3 gap-3'
+        aria-label='Select color theme'
+        aria-describedby='color-theme-description'
+      >
+        {COLOR_THEME_OPTIONS.map((option) => {
+          const colorStyle = {
+            '--color-theme-option': `var(--theme-swatch-${option.value})`,
+            '--color-theme-option-background': `color-mix(in oklch, var(--theme-swatch-${option.value}) 16%, white)`,
+            '--color-theme-option-hover-background': `color-mix(in oklch, var(--theme-swatch-${option.value}) 24%, white)`,
+            '--color-theme-option-checked-background': `color-mix(in oklch, var(--theme-swatch-${option.value}) 32%, white)`,
+            '--color-theme-option-foreground': `color-mix(in oklch, var(--theme-swatch-${option.value}) 58%, black)`,
+            '--color-theme-option-dark-background': `color-mix(in oklch, var(--theme-swatch-${option.value}) 25%, black)`,
+            '--color-theme-option-dark-hover-background': `color-mix(in oklch, var(--theme-swatch-${option.value}) 33%, black)`,
+            '--color-theme-option-dark-checked-background': `color-mix(in oklch, var(--theme-swatch-${option.value}) 42%, black)`,
+            '--color-theme-option-dark-foreground': `color-mix(in oklch, var(--theme-swatch-${option.value}) 24%, white)`,
+          } as CSSProperties
+
+          return (
+            <Item
+              key={option.value}
+              value={option.value}
+              className='group outline-none'
+              aria-label={`Select ${option.label.toLowerCase()} color theme`}
+            >
+              <div
+                className={cn(
+                  'relative flex h-8 items-center gap-2 rounded-lg px-2 text-sm transition-colors',
+                  'bg-(--color-theme-option-background) text-(--color-theme-option-foreground)',
+                  'hover:bg-(--color-theme-option-hover-background)',
+                  'group-data-[state=checked]:bg-(--color-theme-option-checked-background)',
+                  'dark:bg-(--color-theme-option-dark-background) dark:text-(--color-theme-option-dark-foreground)',
+                  'dark:hover:bg-(--color-theme-option-dark-hover-background)',
+                  'dark:group-data-[state=checked]:bg-(--color-theme-option-dark-checked-background)',
+                  'group-focus-visible:ring-2 group-focus-visible:ring-ring'
+                )}
+                style={colorStyle}
+              >
+                <CircleCheck
+                  className={cn(
+                    'size-6 fill-primary stroke-primary-foreground',
+                    'group-data-[state=unchecked]:hidden',
+                    'absolute top-0 right-0 translate-x-1/2 -translate-y-1/2'
+                  )}
+                  aria-hidden='true'
+                />
+                <span
+                  aria-hidden='true'
+                  className={cn(
+                    'size-3.5 shrink-0 rounded-full ring-1 ring-border',
+                    option.swatchClassName
+                  )}
+                />
+                <span className='min-w-0 truncate'>{option.label}</span>
+              </div>
+            </Item>
+          )
+        })}
+      </Radio>
+      <div id='color-theme-description' className='sr-only'>
+        Choose the accent color palette used by semantic UI tokens
       </div>
     </div>
   )
@@ -308,49 +396,6 @@ function LayoutConfig() {
       </Radio>
       <div id='layout-description' className='sr-only'>
         Choose between default expanded, compact icon-only, or full layout mode
-      </div>
-    </div>
-  )
-}
-
-function DirConfig() {
-  const { defaultDir, dir, setDir } = useDirection()
-  return (
-    <div>
-      <SectionTitle
-        title='Direction'
-        showReset={defaultDir !== dir}
-        onReset={() => setDir(defaultDir)}
-        resetAriaLabel='Reset text direction to default'
-      />
-      <Radio
-        value={dir}
-        onValueChange={setDir}
-        className='grid w-full max-w-md grid-cols-3 gap-4'
-        aria-label='Select site direction'
-        aria-describedby='direction-description'
-      >
-        {[
-          {
-            value: 'ltr',
-            label: 'Left to Right',
-            icon: (props: SVGProps<SVGSVGElement>) => (
-              <IconDir dir='ltr' {...props} />
-            ),
-          },
-          {
-            value: 'rtl',
-            label: 'Right to Left',
-            icon: (props: SVGProps<SVGSVGElement>) => (
-              <IconDir dir='rtl' {...props} />
-            ),
-          },
-        ].map((item) => (
-          <RadioGroupItem key={item.value} item={item} />
-        ))}
-      </Radio>
-      <div id='direction-description' className='sr-only'>
-        Choose between left-to-right or right-to-left site direction
       </div>
     </div>
   )

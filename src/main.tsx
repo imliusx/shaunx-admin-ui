@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { handleServerError } from '@/lib/handle-server-error'
+import { ColorThemeProvider } from './context/color-theme-provider'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'
@@ -95,13 +96,15 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <FontProvider>
-            <DirectionProvider>
-              <TooltipProvider>
-                <RouterProvider router={router} />
-              </TooltipProvider>
-            </DirectionProvider>
-          </FontProvider>
+          <ColorThemeProvider>
+            <FontProvider>
+              <DirectionProvider>
+                <TooltipProvider>
+                  <RouterProvider router={router} />
+                </TooltipProvider>
+              </DirectionProvider>
+            </FontProvider>
+          </ColorThemeProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>

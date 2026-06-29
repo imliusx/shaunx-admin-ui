@@ -47,7 +47,7 @@ export function SignUpForm({
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card className='overflow-hidden p-0'>
+      <Card className='overflow-hidden bg-popover/55 p-0 text-popover-foreground shadow-xl ring-1 ring-foreground/10 backdrop-blur-2xl backdrop-saturate-150'>
         <CardContent className='grid p-0 md:grid-cols-2'>
           <form className='p-6 md:order-last md:p-8' onSubmit={onSubmit}>
             <FieldGroup>
@@ -105,7 +105,7 @@ export function SignUpForm({
                   {isLoading ? 'Creating account...' : 'Create Account'}
                 </Button>
               </Field>
-              <FieldSeparator className='*:data-[slot=field-separator-content]:bg-card'>
+              <FieldSeparator className='*:data-[slot=field-separator-content]:bg-popover'>
                 Or continue with
               </FieldSeparator>
               <Field className='grid grid-cols-3 gap-4'>

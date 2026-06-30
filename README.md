@@ -28,6 +28,12 @@
 | --- | --- | --- |
 | <img src="./public/screenshots/light-yellow.png" alt="Yellow theme preview" width="260" /> | <img src="./public/screenshots/light-lime.png" alt="Lime theme preview" width="260" /> | <img src="./public/screenshots/light-emerald.png" alt="Emerald theme preview" width="260" /> |
 
+### Auth Screens
+
+| Sign In | Sign Up |
+| --- | --- |
+| <img src="./public/screenshots/light-login.png" alt="Sign in preview" width="390" /> | <img src="./public/screenshots/light-signup.png" alt="Sign up preview" width="390" /> |
+
 ## 特性
 
 - Vite + React 19 + TypeScript

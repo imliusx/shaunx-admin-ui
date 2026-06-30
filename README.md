@@ -171,3 +171,9 @@ VITE_CLERK_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 - 避免在业务组件中硬编码颜色、圆角和阴影
 - 页面功能放在 `src/features`，路由入口放在 `src/routes`
 - 新增主题色时同步更新 `--primary`、`--ring`、`--chart-*` 和侧边栏相关 token
+
+## License
+
+Licensed under the [MIT License](./LICENSE).
+
+This project is based on and inspired by [satnaing/shadcn-admin](https://github.com/satnaing/shadcn-admin), which is also licensed under the MIT License.

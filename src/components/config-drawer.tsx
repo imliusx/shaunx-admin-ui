@@ -150,7 +150,7 @@ function RadioGroupItem({
       >
         <CircleCheck
           className={cn(
-            'size-6 fill-primary stroke-primary-foreground',
+            'size-6 fill-primary stroke-background',
             'group-data-[state=unchecked]:hidden',
             'absolute top-0 right-0 translate-x-1/2 -translate-y-1/2'
           )}
@@ -279,7 +279,7 @@ function ColorConfig() {
               >
                 <CircleCheck
                   className={cn(
-                    'size-6 fill-primary stroke-primary-foreground',
+                    'size-6 fill-primary stroke-background',
                     'group-data-[state=unchecked]:hidden',
                     'absolute top-0 right-0 translate-x-1/2 -translate-y-1/2'
                   )}

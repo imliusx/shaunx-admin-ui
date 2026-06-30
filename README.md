@@ -24,9 +24,9 @@
 | --- | --- | --- |
 | <img src="./public/screenshots/light-violet.png" alt="Violet theme preview" width="260" /> | <img src="./public/screenshots/light-red.png" alt="Red theme preview" width="260" /> | <img src="./public/screenshots/light-sky.png" alt="Sky theme preview" width="260" /> |
 
-| Yellow | Lime |
-| --- | --- |
-| <img src="./public/screenshots/light-yellow.png" alt="Yellow theme preview" width="260" /> | <img src="./public/screenshots/light-lime.png" alt="Lime theme preview" width="260" /> |
+| Yellow | Lime | Emerald |
+| --- | --- | --- |
+| <img src="./public/screenshots/light-yellow.png" alt="Yellow theme preview" width="260" /> | <img src="./public/screenshots/light-lime.png" alt="Lime theme preview" width="260" /> | <img src="./public/screenshots/light-emerald.png" alt="Emerald theme preview" width="260" /> |
 
 ## 特性
 

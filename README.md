@@ -4,12 +4,6 @@
 
 项目目标是提供一套开箱即用的管理端基础界面：保留常见后台功能模块，同时尽量使用 shadcn/ui 官方组件、官方设计 token 和语义化样式，方便后续按业务快速扩展。
 
-## 项目来源
-
-本项目的功能结构和页面场景参考自 [satnaing/shadcn-admin](https://github.com/satnaing/shadcn-admin)。
-
-在此基础上，Shaunx Admin 使用新版 shadcn/ui `radix-nova` 风格重新整理了组件样式、主题 token、圆角、菜单、登录注册页、图表和多主题配色，目标是在保留原后台功能覆盖面的同时，提供更贴近当前 shadcn/ui 官方默认风格的脚手架。
-
 ## 预览
 
 ### Light

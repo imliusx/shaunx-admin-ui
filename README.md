@@ -16,21 +16,17 @@
 
 ### Theme Colors
 
-![Theme color preview](./public/screenshots/color.png)
+| Default | Blue | Pink |
+| --- | --- | --- |
+| <img src="./public/screenshots/color.png" alt="Default theme preview" width="260" /> | <img src="./public/screenshots/light-blue.png" alt="Blue theme preview" width="260" /> | <img src="./public/screenshots/light-pink.png" alt="Pink theme preview" width="260" /> |
 
-![Light blue preview](./public/screenshots/light-blue.png)
+| Violet | Red | Sky |
+| --- | --- | --- |
+| <img src="./public/screenshots/light-violet.png" alt="Violet theme preview" width="260" /> | <img src="./public/screenshots/light-red.png" alt="Red theme preview" width="260" /> | <img src="./public/screenshots/light-sky.png" alt="Sky theme preview" width="260" /> |
 
-![Light pink preview](./public/screenshots/light-pink.png)
-
-![Light violet preview](./public/screenshots/light-violet.png)
-
-![Light red preview](./public/screenshots/light-red.png)
-
-![Light sky preview](./public/screenshots/light-sky.png)
-
-![Light yellow preview](./public/screenshots/light-yellow.png)
-
-![Light lime preview](./public/screenshots/light-lime.png)
+| Yellow | Lime |
+| --- | --- |
+| <img src="./public/screenshots/light-yellow.png" alt="Yellow theme preview" width="260" /> | <img src="./public/screenshots/light-lime.png" alt="Lime theme preview" width="260" /> |
 
 ## 特性
 

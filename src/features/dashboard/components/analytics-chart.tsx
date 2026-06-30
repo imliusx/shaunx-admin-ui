@@ -52,11 +52,11 @@ export function AnalyticsChart() {
   const chartConfig = {
     clicks: {
       label: t('dashboard.chart.clicks'),
-      color: 'var(--chart-1)',
+      color: 'var(--chart-2)',
     },
     uniques: {
       label: t('dashboard.chart.uniqueVisitors'),
-      color: 'var(--chart-2)',
+      color: 'var(--chart-1)',
     },
   } satisfies ChartConfig
 

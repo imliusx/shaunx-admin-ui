@@ -85,7 +85,7 @@ export function Overview() {
           tickFormatter={(value) => `$${value}`}
         />
         <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-        <Bar dataKey='total' fill='var(--color-total)' radius={8} />
+        <Bar dataKey='total' fill='var(--color-total)' radius={10} />
       </BarChart>
     </ChartContainer>
   )

@@ -225,7 +225,7 @@ function MetricsBarChart({
         />
         <XAxis dataKey='value' type='number' hide />
         <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-        <Bar dataKey='value' fill='var(--color-value)' radius={6}>
+        <Bar dataKey='value' fill='var(--color-value)' radius={10}>
           <LabelList
             dataKey='value'
             position='right'
